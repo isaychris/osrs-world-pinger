@@ -1,7 +1,8 @@
 from bs4 import BeautifulSoup
+import subprocess
 import collections
 import requests
-import os
+import re
 
 url = "http://oldschool.runescape.com/slu?order=WMLPA"
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'}
@@ -14,11 +15,10 @@ server_list = {}
 
 def get_ping(world):
     address = "oldschool{}.runescape.com".format(world)
-    result = os.popen('ping {} -n 1'.format(address)).readlines()
-    first, *middle, last = result[-1].split()
-    ms = int(''.join(list(filter(str.isdigit, last))))
-
-    return ms
+    command = "ping {} -n 1".format(address)
+    output = subprocess.check_output(command, shell=True).decode('utf-8')
+    matches = re.findall("time=([\d.]+)ms", output)
+    return int(matches[0])
 
 def init_server_list():
     for row in table:
@@ -31,7 +31,6 @@ def init_server_list():
 def get_server_info(w):
     server_list[w]['ping'] = get_ping(w)
     return server_list[w]
-
 
 def get_best_servers():
     print("Top Five Worlds: \n")
@@ -75,5 +74,5 @@ def main():
                                                                 server["type"], server["ping"], server["activity"]))
 
         else:
-            print("Unable to retrieve info for world [ {} ]".format(x))
+            print("Unable to retrieve info for world [{}] ...".format(x))
 main()
