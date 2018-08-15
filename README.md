@@ -1,5 +1,5 @@
 # osrs_world_pinger
-retrieves ping and info for all worlds in oldschool runescape
+Extracts world info from the runescape website and pings each world to find the ones with the best latency.
 
 ### Requirements
 * python 3
