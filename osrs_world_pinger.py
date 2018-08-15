@@ -20,20 +20,25 @@ def get_ping(world):
 
     return ms
 
-def get_server_list():
+def init_server_list():
     for row in table:
         data = row.find_all("td", class_="server-list__row-cell")
-        w = int(data[0].text.split()[-1])
-        p = int(data[1].text.split()[0])
+        w = data[0].text.split()[-1]
+        p = data[1].text.split()[0]
         c, t, a, ping = data[2].text, data[3].text, data[4].text, None
-        server_list[w] = {"players": p, "country": c, "type": t, "activity": a, "ping": ping}
+        server_list[w] = {"players": p, "country": c, "type": t, "activity": a, "ping": 0}
 
-    for key, value in server_list.items():
-        server_list[key]["ping"] = get_ping(key)
-        print("{:<7} {:<20} {:<15} {:<15} {:<10} {}".format(key, value["country"], value["players"],
-                                                            value["type"], value["ping"], value["activity"]))
+def get_server_info(w):
+    server_list[w]['ping'] = get_ping(w)
+    return server_list[w]
+
 
 def get_best_servers():
+    print("Top Five Worlds: \n")
+    print("{:<7} {:<20} {:<15} {:15} {:<10} {}".format("World", "Country", "Players", "Type", "Ping(ms)",
+                                                       "Activity"))
+    print("---------------------------------------------------------------------------------------")
+
     d = collections.OrderedDict(sorted(server_list.items(), key=lambda t: t[1]['ping']))
 
     count = 0
@@ -44,16 +49,31 @@ def get_best_servers():
             count += 1
 
 def main():
-    print("OSRS World Pinger - https://github.com/isaychris \n")
+    print("// OSRS World Pinger - https://github.com/isaychris")
+    print("// Press [enter] to ping ALL worlds OR enter a specific number. \n")
+    init_server_list()
+
+    x = input("Ping World[?]: ")
+
     print("{:<7} {:<20} {:<15} {:15} {:<10} {}".format("World", "Country", "Players", "Type", "Ping(ms) ", "Activity"))
     print("---------------------------------------------------------------------------------------")
-    get_server_list()
 
-    print("=======================================================================================")
+    if x == "":
+        for key, value in server_list.items():
+            server = get_server_info(key)
+            print("{:<7} {:<20} {:<15} {:<15} {:<10} {}".format(key, server["country"], server["players"],
+                                                                server["type"], server["ping"], server["activity"]))
 
-    print("Top Five Worlds: \n")
-    print("{:<7} {:<20} {:<15} {:15} {:<10} {}".format("World", "Country", "Players", "Type", "Ping(ms)", "Activity"))
-    print("---------------------------------------------------------------------------------------")
-    get_best_servers()
+        print("=======================================================================================")
 
+        get_best_servers()
+
+    else:
+        if x in server_list:
+            server = get_server_info(x)
+            print("{:<7} {:<20} {:<15} {:<15} {:<10} {}".format(x, server["country"], server["players"],
+                                                                server["type"], server["ping"], server["activity"]))
+
+        else:
+            print("Unable to retrieve info for world [ {} ]".format(x))
 main()
