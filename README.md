@@ -3,6 +3,8 @@ A tool for oldschool runescape that retrieves world information and its latency.
 * The user can choose to ping a specific world or to ping all worlds.   
 * The top five worlds with best latency is displayed when user pings all worlds.  
 
+If you dont have python installed, there is an compiled executable available named `osrs_world_pinger.exe`
+
 ### Requirements
 * python 3
 * beautifulsoup 4

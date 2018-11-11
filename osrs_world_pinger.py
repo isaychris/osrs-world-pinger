@@ -126,6 +126,9 @@ def main():
 
         else:
             print("Unable to retrieve info for world [{}] ...".format(x))
-
+	
+    print("")
+    q = input("Press any key to quit the program ...")
+	
 if __name__ == "__main__":
     main()
