@@ -6,10 +6,9 @@ import requests
 import queue
 import re
 
-
 class OSRSWorldPinger():
     def __init__(self):
-        self.num_threads = 16
+        self.num_threads = 8
         self.ping_queue = queue.Queue()
 
         self.headers = {
@@ -19,7 +18,6 @@ class OSRSWorldPinger():
         self.soup = BeautifulSoup(self.result.content, "html.parser")
 
         self.server_list = {}
-
 
     # worker thread to ping servers with system command
     def thread_pinger(self, i, q):
@@ -41,8 +39,14 @@ class OSRSWorldPinger():
 
         for row in table:
             data = row.find_all("td", class_="server-list__row-cell")
+
             w = data[0].text.split()[-1]
-            p = data[1].text.split()[0]
+
+            if not data[1].text:
+                p = "FULL"
+            else:
+                p = data[1].text.split()[0]
+
             c, t, a, ping = data[2].text, data[3].text, data[4].text, None
             self.server_list[w] = {"players": p, "country": c, "type": t, "activity": a, "ping": 0}
 
