@@ -41,13 +41,12 @@ class OSRSWorldPinger():
             data = row.find_all("td", class_="server-list__row-cell")
 
             w = data[0].text.split()[-1]
-
             if not data[1].text:
                 p = "FULL"
             else:
                 p = data[1].text.split()[0]
 
-            c, t, a, ping = data[2].text, data[3].text, data[4].text, None
+            c, t, a = data[2].text, data[3].text, data[4].text
             self.server_list[w] = {"players": p, "country": c, "type": t, "activity": a, "ping": 0}
 
 
@@ -71,7 +70,7 @@ class OSRSWorldPinger():
 
     # prints out the server info in formatted string.
     def display(self, key, value):
-        print("{:<7} {:<20} {:<15} {:<15} {:<10} {}".format(key, value["country"], value["players"],
+        print("{:<7} {:<20} {:<15} {:<15} {:<10} {}".format(str(int(key) + 300), value["country"], value["players"],
                                                             value["type"], value["ping"], value["activity"]))
 
 
@@ -83,7 +82,8 @@ def main():
     print("// Tip: Press [enter] to ping ALL worlds \n")
 
     x = input("Ping World[?]: ")
-
+    
+    print("")
     print("{:<7} {:<20} {:<15} {:15} {:<10} {}".format("World", "Country", "Players", "Type", "Ping(ms) ", "Activity"))
     print("---------------------------------------------------------------------------------------")
 
@@ -109,8 +109,8 @@ def main():
 
     # else, user input must be a number, so ping only one world.
     else:
-        if x in wp.server_list:
-            wp.ping_queue.put(x)
+        if str(int(x) - 300) in wp.server_list:
+            wp.ping_queue.put(str(int(x) - 300))
 
             # start the thread pool
             for i in range(wp.num_threads):
@@ -122,13 +122,13 @@ def main():
             wp.ping_queue.join()
 
             # display info for only one server
-            wp.display(x, wp.server_list[x])
+            wp.display(str(int(x) - 300), wp.server_list[str(int(x) - 300)])
 
         else:
             print("Unable to retrieve info for world [{}] ...".format(x))
 	
     print("")
-    q = input("Press any key to quit the program ...")
+    input("Press [enter] to quit the program ...")
 	
 if __name__ == "__main__":
     main()
