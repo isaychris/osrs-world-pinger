@@ -4,6 +4,10 @@ setup(
     name='osrs_world_pinger',
     version='1.1',
     packages=[''],
+    install_requires=[
+        "requests",
+        "beautifulsoup4"
+    ],
     url='https://github.com/isaychris',
     license='',
     author='isaychris',

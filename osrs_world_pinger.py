@@ -6,6 +6,7 @@ import requests
 import queue
 import re
 
+
 class OSRSWorldPinger():
     def __init__(self):
         self.num_threads = 8
@@ -32,7 +33,6 @@ class OSRSWorldPinger():
 
             q.task_done()
 
-
     # initiates server list with info pulled from osrs world selection website.
     def init_server_list(self):
         table = self.soup.findAll("tr", "server-list__row")
@@ -49,13 +49,13 @@ class OSRSWorldPinger():
             c, t, a = data[2].text, data[3].text, data[4].text
             self.server_list[w] = {"players": p, "country": c, "type": t, "activity": a, "ping": 0}
 
-
     # displays the top five servers with the lowest latencies.
     def get_best_servers(self):
         print("=======================================================================================")
 
         print("[Top Five Worlds] \n")
-        print("{:<7} {:<20} {:<15} {:15} {:<10} {}".format("World", "Country", "Players", "Type", "Ping(ms)", "Activity"))
+        print(
+            "{:<7} {:<20} {:<15} {:15} {:<10} {}".format("World", "Country", "Players", "Type", "Ping(ms)", "Activity"))
         print("---------------------------------------------------------------------------------------")
 
         # sort server_list in ascending order by ping value
@@ -66,7 +66,6 @@ class OSRSWorldPinger():
             if count < 5:
                 self.display(key, value)
                 count += 1
-
 
     # prints out the server info in formatted string.
     def display(self, key, value):
@@ -82,7 +81,7 @@ def main():
     print("// Tip: Press [enter] to ping ALL worlds \n")
 
     x = input("Ping World[?]: ")
-    
+
     print("")
     print("{:<7} {:<20} {:<15} {:15} {:<10} {}".format("World", "Country", "Players", "Type", "Ping(ms) ", "Activity"))
     print("---------------------------------------------------------------------------------------")
@@ -109,7 +108,7 @@ def main():
 
     # else, user input must be a number, so ping only one world.
     else:
-        if str(int(x) - 300) in wp.server_list:
+        if x.isdigit() and str(int(x) - 300) in wp.server_list:
             wp.ping_queue.put(str(int(x) - 300))
 
             # start the thread pool
@@ -126,9 +125,10 @@ def main():
 
         else:
             print("Unable to retrieve info for world [{}] ...".format(x))
-	
+
     print("")
     input("Press [enter] to quit the program ...")
-	
+
+
 if __name__ == "__main__":
     main()
